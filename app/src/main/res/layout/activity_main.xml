@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#abcdef"
+    tools:context="io.github.brijoe.MainActivity">
+
+    <io.github.brijoe.liveeffect.LiveEffectsView
+
+        android:id="@+id/effectView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+
+        <Button
+            android:id="@+id/btn_effect_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="樱花" />
+
+        <Button
+            android:id="@+id/btn_effect_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="萤火虫" />
+
+        <Button
+            android:id="@+id/btn_effect_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="下雨" />
+
+        <Button
+            android:id="@+id/btn_effect_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="流星" />
+
+    </LinearLayout>
+
+</RelativeLayout>
