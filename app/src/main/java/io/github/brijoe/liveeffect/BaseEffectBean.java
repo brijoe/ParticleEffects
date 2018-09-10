@@ -8,9 +8,12 @@ import android.graphics.Paint;
  */
 public abstract class BaseEffectBean {
 
-    protected Paint mPaint = new Paint();
     protected int mXRange = LiveEffectsView.getViewWidth();
     protected int mYRange = LiveEffectsView.getViewHeight();
+
+
+    public abstract boolean isAlive();
+
 
     /**
      * 绘制下一帧

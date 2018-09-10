@@ -1,27 +1,21 @@
 package io.github.brijoe.liveeffect.rain;
 
+import android.util.Log;
+
+import io.github.brijoe.liveeffect.BaseEffectBean;
 import io.github.brijoe.liveeffect.BaseEffectDraw;
 
 public class RainDraw extends BaseEffectDraw {
 
-    public RainDraw( int maxNum, int resourceId) {
-        super( maxNum, resourceId);
+    public RainDraw() {
+        maxAddDelayTime=100;
+        maxNum=30;
     }
-
     @Override
-    public void initEffectBitmaps() {
+    protected BaseEffectBean getParticle() {
 
+        Log.d("BaseEffectDraw", "getParticle:RainBean");
+        return new RainBean();
     }
 
-    @Override
-    public void addEffectBean() {
-        if (effectBeanList.size() < maxNum) {
-            effectBeanList.add(new RainBean());
-            mEffectHandler.sendEmptyMessageDelayed(ADD_EFFECT_BEAN, mRandom.nextInt(100));
-        } else {
-            mEffectHandler.removeCallbacksAndMessages(null);
-            mEffectHandler = null;
-            mHandlerThread.quit();
-        }
-    }
 }

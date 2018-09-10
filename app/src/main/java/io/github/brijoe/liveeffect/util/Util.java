@@ -1,9 +1,10 @@
-package io.github.brijoe.liveeffect;
+package io.github.brijoe.liveeffect.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Point;
 
 import java.lang.reflect.Method;
 import java.util.Random;
@@ -50,6 +51,25 @@ public class Util {
         return null;
     }
 
+    public static Bitmap getScaleBitmap(int resId, float scale, float rotate) {
+        try {
+            Bitmap bitmap = getBitmap(resId);
+            Matrix matrix = new Matrix();
+            matrix.postScale(scale, scale);
+            matrix.postRotate(rotate);
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+            width = width == 0 ? width + 1 : width;
+            height = height == 0 ? height + 1 : height;
+            Bitmap resizeBmp = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
+            return resizeBmp;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
     /**
      * 反射获取在主线程调用
      *
@@ -82,6 +102,8 @@ public class Util {
     public static int getRandom(int min, int max) {
         if (max < min)
             return 1;
+        if (min == max)
+            return min;
         return min + random.nextInt(max - min) + 1;
     }
 
@@ -93,5 +115,6 @@ public class Util {
     public static float getRandom() {
         return random.nextFloat();
     }
+
 
 }

@@ -1,36 +1,24 @@
 package io.github.brijoe.liveeffect.meteor;
 
-import android.graphics.Bitmap;
+import android.util.Log;
 
+import io.github.brijoe.liveeffect.BaseEffectBean;
 import io.github.brijoe.liveeffect.BaseEffectDraw;
-import io.github.brijoe.liveeffect.Util;
 
 /**
  * 流星动画
  */
-public class MeteorDraw extends BaseEffectDraw<MeteorBean> {
+public class MeteorDraw extends BaseEffectDraw {
 
-    public MeteorDraw( int maxNum, int resourceId) {
-        super( maxNum, resourceId);
+
+    public MeteorDraw() {
+        maxAddDelayTime=2000;
+        maxNum=6;
     }
 
     @Override
-    public void initEffectBitmaps() {
-        for (int i = 0; i < 8; i++) {
-            Bitmap bitmap = Util.getScaleBitmap(originBitmap, (i + 2) * 1.00f / 10, 45.0f);
-            mBitmapsList.add(bitmap);
-        }
-    }
-
-    @Override
-    public void addEffectBean() {
-        if (effectBeanList.size() < maxNum) {
-            effectBeanList.add(new MeteorBean());
-            mEffectHandler.sendEmptyMessageDelayed(ADD_EFFECT_BEAN, mRandom.nextInt(2000));
-        } else {
-            mEffectHandler.removeCallbacksAndMessages(null);
-            mEffectHandler = null;
-            mHandlerThread.quit();
-        }
+    protected BaseEffectBean getParticle() {
+        Log.d("BaseEffectDraw", "getParticle:MeteorBean");
+        return new MeteorBean();
     }
 }

@@ -3,164 +3,86 @@ package io.github.brijoe.liveeffect.sakura;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.Random;
-
+import io.github.brijoe.R;
 import io.github.brijoe.liveeffect.BaseEffectBean;
-import io.github.brijoe.liveeffect.LiveEffectsView;
+import io.github.brijoe.liveeffect.util.Util;
 
 /**
- * 樱花动画bean
+ * 樱花
+ *
+ * @author Brijoe
  */
+
+//从画布右边向左方向移动，运动曲线随机，透明度有变化，旋转角度缓动
 public class SakuraBean extends BaseEffectBean {
 
-    private String TAG = getClass().getSimpleName();
-
-    /**
-     * 第一个控制点的区域
-     */
-    private Rect mRect0;
-
-    /**
-     * 第二个控制点的区域
-     */
-    private Rect mRect1;
-
-    private int mScreenHeight;
-
-    private int mScreenWidth;
-
-    private int currentDegree;
-    private int degreeAdd;
-
-
-    /**
-     * 起点,控制点0,控制点1,终点,当前坐标
-     */
-    public Point mStartPoint, mControlPoint0, mControlPoint1, mEndPoint, mCurrentPoint;
-
-    /**
-     * 透明度
-     */
-    public int alpha;
-    /**
-     * icon
-     */
     private Bitmap mBitmap;
-    /**
-     * 产生随机数
-     */
-    private Random random = new Random();
-    /**
-     * 动画是否结束
-     */
-    private boolean isEnd;
-    /**
-     * 动画生命
-     */
-    private int maxTime = 10;
-    private int minTime = 8;
-    private int lifeTime;
-    private Paint mPaint;
 
-    private ArrayList<Point> mPathPointList;
-    private int currentIndex;
+    private float mScale;
 
-    private int framerate = 50;
+    private int mAlpha;
+
+    private int mRotate;
+
+    private int mRotateSpeed;
+
+    private int mSpeed;
+
+    private int mDrawX, mDrawY;
+
 
     public SakuraBean() {
-        mScreenHeight = LiveEffectsView.getViewHeight();
-        mScreenWidth = LiveEffectsView.getViewWidth();
-        mPaint = new Paint();
-        reset();
+        init();
     }
 
-    public void reset() {
-        currentDegree = random.nextInt(360);
-        degreeAdd = random.nextInt(6) + 1;
-        mBitmap = SakuraDraw.mBitmapsList.get(random.nextInt(SakuraDraw.mBitmapsList.size()));
-        mPaint.setAlpha(random.nextInt(100) + 80);
-        if (random.nextFloat() < 0.3) {
-            mStartPoint = new Point(random.nextInt(mScreenWidth / 4 * 3) + mScreenWidth / 4, 0);
+
+    private void init() {
+        mScale = Util.getRandom(1, 10) * 1.00f / 10;
+        mAlpha = Util.getRandom(50, 256);
+        mBitmap = Util.getScaleBitmap(R.drawable.icon_sakura, mScale, 0);
+        //横纵向绘制起始区域
+        float v = Util.getRandom();
+        //40%概率 在横向[0.25,1]处开始绘制
+        if (v < 0.4) {
+            mDrawX = Util.getRandom(mXRange / 4, mXRange);
+            mDrawY = -mBitmap.getHeight();
         } else {
-            mStartPoint = new Point(mScreenWidth, random.nextInt(mScreenHeight / 4 * 3));
+            //60% 概率
+            mDrawX = mXRange;
+            mDrawY = Util.getRandom(-mBitmap.getHeight(), mYRange * 3 / 4);
         }
-        mEndPoint = new Point((mStartPoint.x - mScreenWidth * 4 / 3) + (-mScreenWidth / 4 + random.nextInt(mScreenWidth / 2)),
-                mStartPoint.y + mScreenHeight / 4 * 3 + (-mScreenHeight / 4 + random.nextInt(mScreenHeight / 2)));
-        lifeTime = random.nextInt(maxTime - minTime + 1) + minTime;
-        currentIndex = 0;
-        mRect0 = new Rect(mEndPoint.x, mStartPoint.y, mStartPoint.x, mEndPoint.y);
-        mControlPoint0 = getPointFromRect(mRect0);
-        mControlPoint1 = getPointFromRect(mRect0);
-        mPathPointList = getPathPointList(mStartPoint, mEndPoint, mControlPoint0, mControlPoint1);
-        isEnd = false;
+        mRotate = Util.getRandom(0, 359);
+        mRotateSpeed = Util.getRandom(1, 4);
+        mSpeed = Util.getRandom(2, 6);
     }
 
-
-    private Point getPointFromRect(Rect rect) {
-        if (rect.width() <= 0 || rect.height() <= 0) {
-            Log.e(TAG, rect.left + "--" + rect.top + "--" + rect.right + "--" + rect.bottom);
-        }
-        int x = random.nextInt(Math.abs(rect.width()) + 1) + rect.left;
-        int y = random.nextInt(Math.abs(rect.height()) + 1) + rect.top;
-
-        return new Point(x, y);
-    }
-
-    private ArrayList<Point> getPathPointList(Point startPoint, Point endPoint, Point controlPoint0, Point controlPoint1) {
-        ArrayList<Point> arrayList = new ArrayList<>();
-        float timeLeft;
-        float time;
-        for (int i = 0; i < framerate * lifeTime; i++) {
-            Point point = new Point();
-            timeLeft = (framerate * lifeTime - i) * 1.0f / (framerate * lifeTime);
-            time = i / (framerate * lifeTime * 1.0f);
-            point.x = (int) (timeLeft * timeLeft * timeLeft * (startPoint.x)
-                    + 3 * timeLeft * timeLeft * time * (controlPoint0.x)
-                    + 3 * timeLeft * time * time * (controlPoint1.x)
-                    + time * time * time * (endPoint.x));
-
-            point.y = (int) (timeLeft * timeLeft * timeLeft * (startPoint.y)
-                    + 3 * timeLeft * timeLeft * time * (controlPoint0.y)
-                    + 3 * timeLeft * time * time * (controlPoint1.y)
-                    + time * time * time * (endPoint.y));
-            arrayList.add(point);
-        }
-        return arrayList;
-    }
 
     @Override
+    public boolean isAlive() {
+        return true;
+    }
+
     public void drawNextFrame(Canvas canvas, Paint paint) {
-        if (mBitmap != null && !isEnd) {
-            currentIndex++;
-            if (currentIndex > mPathPointList.size() - 1) {
-                isEnd = true;
-                reset();
-                return;
-            }
-            mCurrentPoint = mPathPointList.get(currentIndex);
-            if (mCurrentPoint.x < -mBitmap.getWidth() - 1 && mCurrentPoint.y > mScreenHeight + mBitmap.getHeight() + 1) {
-                isEnd = true;
-                reset();
-                return;
-            }
-            currentDegree += degreeAdd;
-            canvas.save();
-            canvas.rotate(currentDegree, mCurrentPoint.x + mBitmap.getWidth() / 2, mCurrentPoint.y + mBitmap.getHeight() / 2);
-            canvas.drawBitmap(mBitmap, mCurrentPoint.x, mCurrentPoint.y, mPaint);
-            canvas.restore();
-        }
+
+        //边界
+        if (mDrawX < -mBitmap.getWidth() || mDrawY >= mDrawY + mBitmap.getHeight())
+            init();
+        //绘制方法
+        paint.setAlpha(mAlpha);
+        canvas.save();
+        canvas.rotate(mRotate, mDrawX + mBitmap.getWidth() / 2, mDrawY + mBitmap.getHeight() / 2);
+        canvas.drawBitmap(mBitmap, mDrawX, mDrawY, paint);
+        canvas.restore();
+        //移动
+        mDrawX -= mSpeed;
+        mDrawY += mSpeed;
+        //旋转
+        mRotate += mRotateSpeed;
     }
 
-    @Override
+
     public void destroy() {
-        if (mPathPointList != null) {
-            mPathPointList.clear();
-            mPathPointList = null;
-        }
+
     }
 }

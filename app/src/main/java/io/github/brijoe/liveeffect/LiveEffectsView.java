@@ -93,39 +93,45 @@ public class LiveEffectsView extends SurfaceView implements SurfaceHolder.Callba
      * @param drawView
      */
     public void setDrawView(BaseEffectDraw drawView) {
+        if (drawView == null)
+            throw new IllegalArgumentException("DrawView 不能为空");
+        //销毁上一个
+//        if (mEffectDraw != null)
+//            mEffectDraw.destroy();
         this.mEffectDraw = drawView;
         start();
     }
 
-    public void start() {
+    private void start() {
         //执行初始化操作
-
-        if (mDrawThread != null) {
+        if (mDrawThread != null && mEffectDraw != null) {
+            mEffectDraw.init();
             if (!mDrawThread.isAlive())
                 mDrawThread.start();
             mDrawThread.setRunning(true);
         }
-    }
-    public void stop() {
-        if (mDrawThread != null)
-            mDrawThread.setRunning(false);
-    }
 
+    }
 
     /**
      * 释放资源操作
      */
     public void release() {
+        //销毁绘制线程
         if (mDrawThread != null) {
             mDrawThread.setRunning(false);
             mDrawThread = null;
         }
+        //销毁特效View
+        if (mEffectDraw != null)
+            mEffectDraw.destroy();
         //fix memory leak
         if (mSurfaceHolder != null) {
             Surface surface = mSurfaceHolder.getSurface();
             if (surface != null)
                 surface.release();
         }
+
     }
 
 

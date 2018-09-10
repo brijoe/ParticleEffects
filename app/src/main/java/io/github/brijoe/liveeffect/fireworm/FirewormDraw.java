@@ -1,37 +1,24 @@
 package io.github.brijoe.liveeffect.fireworm;
 
-import android.graphics.Bitmap;
+import android.util.Log;
 
+import io.github.brijoe.liveeffect.BaseEffectBean;
 import io.github.brijoe.liveeffect.BaseEffectDraw;
-import io.github.brijoe.liveeffect.Util;
 
 /**
- * 萤火虫动画
+ * @author Brijoe
  */
-public class FirewormDraw extends BaseEffectDraw<FirewormBean> {
+public class FirewormDraw extends BaseEffectDraw {
 
 
-    public FirewormDraw( int maxNum, int resourceId) {
-        super( maxNum, resourceId);
+    public FirewormDraw() {
+        maxNum = 15;
+        maxAddDelayTime = 2000;
     }
 
     @Override
-    public void initEffectBitmaps() {
-        for (int i = 0; i < 8; i++) {
-            Bitmap bitmap = Util.getScaleBitmap(originBitmap, (i + 2) * 1.00f / 10, 0);
-            mBitmapsList.add(bitmap);
-        }
-    }
-
-    @Override
-    public void addEffectBean() {
-        if (effectBeanList.size() < maxNum) {
-            effectBeanList.add(new FirewormBean());
-            mEffectHandler.sendEmptyMessageDelayed(ADD_EFFECT_BEAN, mRandom.nextInt(2000));
-        } else {
-            mEffectHandler.removeCallbacksAndMessages(null);
-            mEffectHandler = null;
-            mHandlerThread.quit();
-        }
+    protected BaseEffectBean getParticle() {
+        Log.d("BaseEffectDraw", "getParticle:Fireworm Bean");
+        return new FirewormBean();
     }
 }

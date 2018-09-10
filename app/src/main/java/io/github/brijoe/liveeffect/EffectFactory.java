@@ -3,7 +3,6 @@ package io.github.brijoe.liveeffect;
 
 import android.util.SparseArray;
 
-import io.github.brijoe.R;
 import io.github.brijoe.liveeffect.fireworm.FirewormDraw;
 import io.github.brijoe.liveeffect.meteor.MeteorDraw;
 import io.github.brijoe.liveeffect.rain.RainDraw;
@@ -23,10 +22,11 @@ class EffectFactory {
     private static SparseArray<BaseEffectDraw> effectDrawMap = new SparseArray<>(4);
 
     static {
-        effectDrawMap.put(SAKURA_EFFECTS, new SakuraDraw(15, R.drawable.icon_sakura));
-        effectDrawMap.put(FIREWORM_EFFECTS, new FirewormDraw(15, R.drawable.icon_fireworm));
-        effectDrawMap.put(RAIN_EFFECTS, new RainDraw(30, 0));
-        effectDrawMap.put(METEOR_EFFECTS, new MeteorDraw(6, R.drawable.icon_meteor));
+
+        effectDrawMap.put(SAKURA_EFFECTS, new SakuraDraw());
+        effectDrawMap.put(FIREWORM_EFFECTS, new FirewormDraw());
+        effectDrawMap.put(RAIN_EFFECTS, new RainDraw());
+        effectDrawMap.put(METEOR_EFFECTS, new MeteorDraw());
     }
 
     public static BaseEffectDraw getEffect(int effectId) {

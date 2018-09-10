@@ -1,112 +1,56 @@
 package io.github.brijoe.liveeffect;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.os.Message;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Vector;
 
 /**
  * 所有特效的父类，抽象公共方法
  */
-public abstract class BaseEffectDraw<T extends BaseEffectBean> {
+public abstract class BaseEffectDraw {
 
-    protected ArrayList<T> effectBeanList;
-    protected EffectHandler mEffectHandler;
+    private final String TAG = "BaseEffectDraw";
     protected int maxNum;
+    protected int maxAddDelayTime;
 
-    protected Random mRandom = new Random();
+    //共享控制线程和并发List
+    private static ControlThread sControlThread = new ControlThread("control");
+    //并发，需要保证实时读取，绘制线程(读)，控制线程(读，写)
+    private static List<BaseEffectBean> sParticleList = new Vector<>();
 
 
-    protected final int ADD_EFFECT_BEAN = 0;
-    protected final HandlerThread mHandlerThread;
-
-    protected Bitmap originBitmap;
-    public static List<Bitmap> mBitmapsList = new ArrayList<>();
-
-    protected class EffectHandler extends Handler {
-
-        public EffectHandler(Looper looper) {
-            super(looper);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case ADD_EFFECT_BEAN:
-                    addEffectBean();
-                    break;
-            }
-        }
+    public BaseEffectDraw() {
     }
 
-    public BaseEffectDraw(int maxNum, int resourceId) {
-        this.maxNum = maxNum;
-        if (resourceId != 0) {
-            originBitmap = Util.getBitmap(resourceId);
-        }
-        mHandlerThread = new HandlerThread(getClass().getSimpleName());
-        mHandlerThread.start();
-        effectBeanList = new ArrayList<>();
-        mEffectHandler = new EffectHandler(mHandlerThread.getLooper());
-        init();
+    //初始化
+    public final void init() {
+        sParticleList.clear();
+        sControlThread.setData(maxNum, maxAddDelayTime, this, sParticleList);
+        sControlThread.reset();
     }
 
-    private void init() {
-        mBitmapsList.clear();
-        initEffectBitmaps();
-
-        if (originBitmap != null) {
-            originBitmap.recycle();
-        }
-
-        mEffectHandler.sendEmptyMessage(ADD_EFFECT_BEAN);
-    }
-
-    /**
-     * 初始化每个特效bitmap，添加进mBitmaps
-     */
-    public abstract void initEffectBitmaps();
-
-
-    /**
-     * 初始化每个特效bean，添加进mBitmapsList
-     */
-    public abstract void addEffectBean();
-
+    //获取一个粒子的方法,子类实现
+    protected abstract BaseEffectBean getParticle();
 
     public void draw(Canvas canvas, Paint paint) {
-        for (int i = 0; i < effectBeanList.size(); i++) {
-            effectBeanList.get(i).drawNextFrame(canvas, paint);
+        if (sParticleList == null || sParticleList.size() == 0)
+            return;
+        //遍历粒子集合进行下一帧绘制
+        for (int i = 0; i < sParticleList.size(); i++)
+            sParticleList.get(i).drawNextFrame(canvas, paint);
+    }
+
+    public void destroy() {
+        if (sControlThread != null) {
+            sControlThread.quit();
+            sControlThread = null;
+        }
+        if (sParticleList != null) {
+            sParticleList.clear();
+            sParticleList = null;
         }
     }
 
-    /**
-     * 销毁所有的数据，帮助gc
-     */
-    public void destroy() {
-        if (mEffectHandler != null) {
-            mEffectHandler.removeCallbacksAndMessages(null);
-            mEffectHandler = null;
-            mHandlerThread.quit();
-        }
-        if (effectBeanList != null && effectBeanList.size() > 0) {
-            for (T bean : effectBeanList) {
-                bean.destroy();
-            }
-        }
-        if (mBitmapsList != null && mBitmapsList.size() > 0) {
-            for (Bitmap bitmap : mBitmapsList) {
-                bitmap.recycle();
-            }
-        }
-    }
 }

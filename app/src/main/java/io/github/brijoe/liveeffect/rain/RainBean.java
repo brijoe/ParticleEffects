@@ -3,76 +3,61 @@ package io.github.brijoe.liveeffect.rain;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import io.github.brijoe.liveeffect.BaseEffectBean;
-import io.github.brijoe.liveeffect.Util;
-
+import io.github.brijoe.liveeffect.util.Util;
 
 /**
- * 雨滴下落
+ * 下雨特效
  */
+
 class RainBean extends BaseEffectBean {
 
-    /**
-     * 起点,当前坐标
-     */
+    //透明度，速度，长度,线条宽度 四个属性
+    private int alpha, speed, length, width;
+    //四个坐标  start(x,y) end(x,y)
+    private int startX, startY, endX, endY;
 
-    private Point mStartPoint, mCurrentPoint;
-
-    private int alpha,speed,length;
-
-    private List<Point> mPathPointList;
-    private int currentIndex;
 
     public RainBean() {
-        mPaint.setColor(Color.WHITE);
-        reset();
+        init();
     }
 
-    public void reset() {
+    private void init() {
         //随机生成属性
-        speed= Util.getRandom(20,45);
-        length=Util.getRandom(130,170);
-        alpha = Util.getRandom(50,140);
-        mStartPoint = new Point(Util.getRandom(0,mXRange), -length);
-        mPaint.setAlpha(alpha);
-        mPaint.setStrokeWidth(Util.getRandom(1,3));
-        currentIndex = 0;
-        setPathPointList();
+        alpha = Util.getRandom(50, 140);
+        speed = Util.getRandom(20, 45);
+        length = Util.getRandom(130, 170);
+        width = Util.getRandom(1, 3);
+        startX = Util.getRandom(0, mXRange);
+        startY = -length;
+        endX = startX;
+        endY = 0;
     }
 
-    private void setPathPointList() {
-        mPathPointList = new ArrayList<>();
-        while (mStartPoint.y < mYRange) {
-            Point point = new Point(mStartPoint.x, mStartPoint.y);
-            mPathPointList.add(point);
-            mStartPoint.y += speed;
-        }
-        Point point = new Point(mStartPoint.x, mStartPoint.y);
-        mPathPointList.add(point);
-
+    @Override
+    public boolean isAlive() {
+        return startY >= 0;
     }
 
     @Override
     public void drawNextFrame(Canvas canvas, Paint paint) {
-        if (currentIndex > mPathPointList.size() - 1) {
-            reset();
-            return;
+        //处理边界
+        if (startY >= mYRange) {
+            init();
         }
-        mCurrentPoint = mPathPointList.get(currentIndex);
-        canvas.drawLine(mCurrentPoint.x, mCurrentPoint.y, mCurrentPoint.x, mCurrentPoint.y + length, mPaint);
-        currentIndex++;
+        //绘制
+        paint.setColor(Color.WHITE);
+        paint.setStrokeWidth(width);
+        paint.setAlpha(alpha);
+        canvas.drawLine(startX, startY, endX, endY, paint);
+        //下落
+        startY += speed;
+        endY += speed;
     }
 
     @Override
     public void destroy() {
-        if (mPathPointList != null) {
-            mPathPointList.clear();
-            mPathPointList = null;
-        }
+
     }
 }
