@@ -95,9 +95,6 @@ public class LiveEffectsView extends SurfaceView implements SurfaceHolder.Callba
     public void setDrawView(BaseEffectDraw drawView) {
         if (drawView == null)
             throw new IllegalArgumentException("DrawView 不能为空");
-        //销毁上一个
-//        if (mEffectDraw != null)
-//            mEffectDraw.destroy();
         this.mEffectDraw = drawView;
         start();
     }
@@ -164,7 +161,7 @@ public class LiveEffectsView extends SurfaceView implements SurfaceHolder.Callba
                             break;
                         }
                         // sleep
-                        SystemClock.sleep(20);
+                        SystemClock.sleep(16);
                     }
                 }
             }

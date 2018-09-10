@@ -9,6 +9,9 @@ import java.util.List;
 
 import io.github.brijoe.liveeffect.util.Util;
 
+/**
+ * 粒子控制线程  控制粒子的添加
+ */
 class ControlThread extends HandlerThread {
 
 
@@ -17,7 +20,7 @@ class ControlThread extends HandlerThread {
 
     private int maxNum, maxAddDelayTime;
 
-    private  EffectHandler mEffectHandler;
+    private EffectHandler mEffectHandler;
 
     private BaseEffectDraw mDraw;
 
@@ -43,21 +46,53 @@ class ControlThread extends HandlerThread {
     }
 
     //粒子控制线程调用
-    private void addParticle() {
+    private void performControl() {
         if (!isAlive())
             return;
         mEffectHandler.sendEmptyMessageDelayed(ADD_EFFECT_BEAN, Util.getRandom(0, maxAddDelayTime));
-        if (effectBeanList.size() < maxNum) {
-            //产生一个粒子并加入集合
-            effectBeanList.add(mDraw.getParticle());
-        } else {
-            int removeCount = Util.getRandom(1, effectBeanList.size());
-            for (int i = 0; i < removeCount; i++) {
-                int index = Util.getRandom(0, effectBeanList.size() - 1);
-                if (!effectBeanList.get(index).isAlive())
-                    effectBeanList.remove(index);
+        float v = Util.getRandom();
+
+        //粒子数量小于三分之一maxNum,80%概率执行添加，20%概率执行删除
+        if (effectBeanList.size() < maxNum * 1 / 3) {
+            if (v <= 0.8) {
+                addOne();
+            } else {
+                removeOne();
             }
         }
+        //粒子数量小于三分之二maxNum,60%概率执行添加，40%概率执行删除
+        else if (effectBeanList.size() < maxNum * 2 / 3)
+            if (v <= 0.6) {
+                addOne();
+            } else {
+                removeOne();
+            }
+            //粒子数量超过三分之二maxNum,40%概率执行添加，60%概率执行删除
+        else {
+            if (v <= 0.4) {
+                addOne();
+            } else {
+                removeOne();
+            }
+        }
+    }
+
+    private void addOne() {
+        if (effectBeanList.size() < maxNum) {
+            effectBeanList.add(mDraw.getParticle());
+        }
+    }
+
+    private void removeOne() {
+        int index = 0;
+        while (index < effectBeanList.size()) {
+            if (effectBeanList.get(index).isLifeEnd()) {
+                effectBeanList.remove(index);
+                break;
+            } else
+                index++;
+        }
+
     }
 
 
@@ -73,7 +108,7 @@ class ControlThread extends HandlerThread {
             super.handleMessage(msg);
             switch (msg.what) {
                 case ADD_EFFECT_BEAN:
-                    addParticle();
+                    performControl();
                     break;
             }
         }

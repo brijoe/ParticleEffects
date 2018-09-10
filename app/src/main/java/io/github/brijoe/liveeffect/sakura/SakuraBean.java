@@ -32,12 +32,8 @@ public class SakuraBean extends BaseEffectBean {
     private int mDrawX, mDrawY;
 
 
-    public SakuraBean() {
-        init();
-    }
-
-
-    private void init() {
+    @Override
+    protected void reset() {
         mScale = Util.getRandom(1, 10) * 1.00f / 10;
         mAlpha = Util.getRandom(50, 256);
         mBitmap = Util.getScaleBitmap(R.drawable.icon_sakura, mScale, 0);
@@ -59,15 +55,11 @@ public class SakuraBean extends BaseEffectBean {
 
 
     @Override
-    public boolean isAlive() {
-        return true;
-    }
-
     public void drawNextFrame(Canvas canvas, Paint paint) {
 
         //边界
-        if (mDrawX < -mBitmap.getWidth() || mDrawY >= mDrawY + mBitmap.getHeight())
-            init();
+        if (mDrawX < -2 * mXRange)
+            reset();
         //绘制方法
         paint.setAlpha(mAlpha);
         canvas.save();
@@ -81,8 +73,8 @@ public class SakuraBean extends BaseEffectBean {
         mRotate += mRotateSpeed;
     }
 
-
-    public void destroy() {
-
+    @Override
+    public boolean isLifeEnd() {
+        return (mDrawX <= -mBitmap.getWidth()) && (mDrawX >= -2 * mXRange);
     }
 }

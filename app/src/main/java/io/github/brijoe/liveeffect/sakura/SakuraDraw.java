@@ -13,8 +13,8 @@ import io.github.brijoe.liveeffect.BaseEffectDraw;
 public class SakuraDraw extends BaseEffectDraw {
 
     public SakuraDraw() {
-        maxNum = 15;
-        maxAddDelayTime = 2000;
+        maxNum = 20;
+        maxAddDelayTime = 1500;
     }
 
     @Override

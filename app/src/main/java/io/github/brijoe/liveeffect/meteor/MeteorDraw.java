@@ -13,7 +13,7 @@ public class MeteorDraw extends BaseEffectDraw {
 
     public MeteorDraw() {
         maxAddDelayTime=2000;
-        maxNum=6;
+        maxNum=10;
     }
 
     @Override

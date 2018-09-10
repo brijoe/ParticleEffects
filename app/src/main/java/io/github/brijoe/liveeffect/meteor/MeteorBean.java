@@ -21,11 +21,9 @@ public class MeteorBean extends BaseEffectBean {
     //绘制点坐标(x,y)，当前透明度，透明度减少速度 值/帧，运动速度
     private int mDrawX, mDrawY, mAlpha, mAlphaReduce, speed;
 
-    public MeteorBean() {
-        init();
-    }
 
-    private void init() {
+    @Override
+    protected void reset() {
         mScale = Util.getRandom(1, 10) * 1.00f / 10;
         mRotate = 45.0f;
         mBitmap = Util.getScaleBitmap(R.drawable.icon_meteor, mScale, mRotate);
@@ -37,7 +35,7 @@ public class MeteorBean extends BaseEffectBean {
             mAlphaReduce = 0;
         }
         //75% 概率在随机值
-        else{
+        else {
             mAlpha = Util.getRandom(200, 255);
             mAlphaReduce = Util.getRandom(10, 15);
         }
@@ -47,21 +45,16 @@ public class MeteorBean extends BaseEffectBean {
             mDrawY = -mBitmap.getHeight();
         } else {
             //60% 概率
-            mDrawX= mXRange;
+            mDrawX = mXRange;
             mDrawY = Util.getRandom(-mBitmap.getHeight(), mYRange / 5 * 2 - mBitmap.getHeight());
         }
     }
 
     @Override
-    public boolean isAlive() {
-        return true;
-    }
-
-    @Override
     public void drawNextFrame(Canvas canvas, Paint paint) {
         //边界条件，x方法移出绘制区域或者透明度为0
-        if (mDrawX <= -mBitmap.getWidth() || mAlpha == 0) {
-            init();
+        if (mDrawX <= -2 * mXRange) {
+            reset();
         }
         //移到绘制区域横向三分之一区域时，执行透明度渐变
         if (mDrawX < mXRange / 3) {
@@ -76,11 +69,10 @@ public class MeteorBean extends BaseEffectBean {
         //移动
         mDrawX = mDrawX - speed;
         mDrawY = mDrawY + speed;
-
     }
 
     @Override
-    public void destroy() {
-
+    public boolean isLifeEnd() {
+        return (mDrawX <= -mXRange - mBitmap.getWidth()) && (mDrawX >= -2 * mXRange);
     }
 }

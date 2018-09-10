@@ -11,8 +11,21 @@ public abstract class BaseEffectBean {
     protected int mXRange = LiveEffectsView.getViewWidth();
     protected int mYRange = LiveEffectsView.getViewHeight();
 
+    //生命周期是否处于结束状态
 
-    public abstract boolean isAlive();
+
+
+    public BaseEffectBean() {
+        reset();
+    }
+
+    protected abstract boolean isLifeEnd();
+
+
+    /**
+     * 属性设置方法
+     */
+    protected abstract void reset();
 
 
     /**
@@ -22,10 +35,5 @@ public abstract class BaseEffectBean {
      * @param paint
      */
     public abstract void drawNextFrame(Canvas canvas, Paint paint);
-
-    /**
-     * 释放资源
-     */
-    public abstract void destroy();
 
 }

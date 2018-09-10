@@ -19,11 +19,8 @@ class RainBean extends BaseEffectBean {
     private int startX, startY, endX, endY;
 
 
-    public RainBean() {
-        init();
-    }
-
-    private void init() {
+    @Override
+    protected void reset() {
         //随机生成属性
         alpha = Util.getRandom(50, 140);
         speed = Util.getRandom(20, 45);
@@ -35,16 +32,12 @@ class RainBean extends BaseEffectBean {
         endY = 0;
     }
 
-    @Override
-    public boolean isAlive() {
-        return startY >= 0;
-    }
 
     @Override
     public void drawNextFrame(Canvas canvas, Paint paint) {
         //处理边界
-        if (startY >= mYRange) {
-            init();
+        if (startY >= 2 * mYRange) {
+            reset();
         }
         //绘制
         paint.setColor(Color.WHITE);
@@ -57,7 +50,7 @@ class RainBean extends BaseEffectBean {
     }
 
     @Override
-    public void destroy() {
-
+    public boolean isLifeEnd() {
+      return (startY>=mYRange)&&(startY<2*mYRange);
     }
 }

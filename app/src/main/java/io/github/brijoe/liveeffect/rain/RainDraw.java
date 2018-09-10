@@ -8,8 +8,8 @@ import io.github.brijoe.liveeffect.BaseEffectDraw;
 public class RainDraw extends BaseEffectDraw {
 
     public RainDraw() {
-        maxAddDelayTime=100;
-        maxNum=30;
+        maxAddDelayTime=50;
+        maxNum=40;
     }
     @Override
     protected BaseEffectBean getParticle() {

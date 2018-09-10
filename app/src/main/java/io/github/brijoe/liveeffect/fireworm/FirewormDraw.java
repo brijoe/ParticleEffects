@@ -12,7 +12,7 @@ public class FirewormDraw extends BaseEffectDraw {
 
 
     public FirewormDraw() {
-        maxNum = 15;
+        maxNum = 20;
         maxAddDelayTime = 2000;
     }
 

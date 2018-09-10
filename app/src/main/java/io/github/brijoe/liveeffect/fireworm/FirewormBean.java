@@ -25,14 +25,10 @@ public class FirewormBean extends BaseEffectBean {
     private int mDrawX, mDrawY, mDisappearY;
 
     //横向运动幅度
-    private int mXmoveRange;
+    private int mXDistance;
 
 
-    public FirewormBean() {
-        reset();
-    }
-
-
+    @Override
     public void reset() {
         mScale = Util.getRandom(1, 10) * 1.00f / 10;
 //        mAlpha = Util.getRandom(50, 256);
@@ -43,18 +39,14 @@ public class FirewormBean extends BaseEffectBean {
         //纵向消失区域
         mDisappearY = Util.getRandom(1, mYRange * 2 / 5);
         mSpeed = Util.getRandom(2, 6);
-        mXmoveRange = Util.getRandom(2, 3);
+        mXDistance = Util.getRandom(2, 3);
     }
 
 
     @Override
-    public boolean isAlive() {
-        return true;
-    }
-
     public void drawNextFrame(Canvas canvas, Paint paint) {
         //边界
-        if (mDrawY <= -mBitmap.getWidth())
+        if (mDrawY <= -2 * mYRange)
             reset();
         //计算透明度
         calculateAlpha();
@@ -76,7 +68,7 @@ public class FirewormBean extends BaseEffectBean {
                 mAlpha = 0;
         } else {
             double x = mYRange - mDrawY;
-            mAlpha = (int) (251 * Math.abs(Math.sin(x/100)) + 5);
+            mAlpha = (int) (251 * Math.abs(Math.sin(x / 100)) + 5);
 
         }
     }
@@ -84,12 +76,11 @@ public class FirewormBean extends BaseEffectBean {
     //X轴横向变化
     private void calculateXAxis() {
         double x = mYRange - mDrawY;
-        mDrawX+=mXmoveRange*Math.sin(x/70);
+        mDrawX += mXDistance * Math.sin(x / 70);
     }
 
-
     @Override
-    public void destroy() {
-
+    public boolean isLifeEnd() {
+        return (mDrawY < -mBitmap.getHeight()) && (mDrawX > -2 * mYRange);
     }
 }
