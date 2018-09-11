@@ -1,6 +1,7 @@
 package io.github.brijoe.liveeffect.util;
 
 import android.graphics.PointF;
+import android.util.Log;
 
 
 /**
@@ -24,6 +25,8 @@ public class BezierUtil {
      */
     public static PointF getPointForQuadratic(float t, PointF p0, PointF p1, PointF p2) {
         PointF point = new PointF();
+        Log.d("getPointForQuadratic",
+                String.format("t=%f,起始点p0=%s,控制点p1=%s,终点p2=%s",t,p0.toString(),p1.toString(),p2.toString()));
         float temp = 1 - t;
         point.x = (float) (Math.pow(temp, 2) * p0.x + 2 * t * temp * p1.x + Math.pow(t, 2) * p2.x);
         point.y = (float) (Math.pow(temp, 2) * p0.y + 2 * t * temp * p1.y + Math.pow(t, 2) * p2.y);
