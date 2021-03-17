@@ -11,14 +11,15 @@ public abstract class BaseEffectBean {
     protected int mXRange = LiveEffectsView.getViewWidth();
     protected int mYRange = LiveEffectsView.getViewHeight();
 
-    //生命周期是否处于结束状态
-
-
 
     public BaseEffectBean() {
         reset();
     }
 
+
+    /**
+     * @return
+     */
     protected abstract boolean isLifeEnd();
 
 

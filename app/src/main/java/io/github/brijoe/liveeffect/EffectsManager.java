@@ -1,7 +1,5 @@
 package io.github.brijoe.liveeffect;
 
-import android.content.Context;
-
 /**
  * 动态效果管理器
  */
@@ -10,9 +8,7 @@ public class EffectsManager {
     private String TAG = getClass().getSimpleName();
     private int mCurrentEffectId;
     private LiveEffectsView mLiveEffectsView;
-    private Context mContext;
 
-    private boolean isShowEffect;
 
     private static class EffectsManagerHolder {
         static EffectsManager mInstance = new EffectsManager();
@@ -34,8 +30,6 @@ public class EffectsManager {
 
     public void setEffectView(LiveEffectsView liveEffectsView) {
         mLiveEffectsView = liveEffectsView;
-        if (mLiveEffectsView != null)
-            mContext = mLiveEffectsView.getContext();
     }
 
     /**
@@ -45,11 +39,14 @@ public class EffectsManager {
      */
     public void setEffect(int effectId) {
         //屏蔽多次设置
-        if (mCurrentEffectId == effectId)
+        if (mCurrentEffectId == effectId) {
             return;
-        if (mLiveEffectsView != null)
-            mLiveEffectsView.setDrawView(EffectFactory.getEffect(effectId));
+        }
         mCurrentEffectId = effectId;
+        if (mLiveEffectsView != null) {
+            mLiveEffectsView.setDrawView(EffectFactory.getEffect(effectId));
+        }
+
     }
 
 
@@ -58,7 +55,7 @@ public class EffectsManager {
      *
      * @return
      */
-    public int getmCurrentEffectId() {
+    public int getCurrentEffectId() {
         return mCurrentEffectId;
     }
 
@@ -66,8 +63,7 @@ public class EffectsManager {
      * 关闭特效
      */
     public void stopEffect() {
-        isShowEffect = false;
-        if(mLiveEffectsView!=null)
+        if (mLiveEffectsView != null)
             mLiveEffectsView.release();
     }
 

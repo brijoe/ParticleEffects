@@ -7,16 +7,21 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * 承载动态效果的View extends SurfaceView
  */
 public class LiveEffectsView extends SurfaceView implements SurfaceHolder.Callback {
+
+    private static final String TAG = "LiveEffectsView";
 
     private SurfaceHolder mSurfaceHolder;
 
@@ -25,6 +30,8 @@ public class LiveEffectsView extends SurfaceView implements SurfaceHolder.Callba
     private static int mViewHeight;
     private BaseEffectDraw mEffectDraw;
     private Paint mPaint = new Paint();
+
+    private Canvas mCanvas;
 
     public LiveEffectsView(Context context) {
         this(context, null);
@@ -51,10 +58,11 @@ public class LiveEffectsView extends SurfaceView implements SurfaceHolder.Callba
 
 
     private void init() {
+        EffectsManager.getInstance().setEffectView(this);
         mSurfaceHolder = getHolder();
         mSurfaceHolder.addCallback(this);
-        setZOrderOnTop(true);
         mSurfaceHolder.setFormat(PixelFormat.TRANSPARENT);
+        this.setZOrderOnTop(true);
         mDrawThread = new DrawThread();
     }
 
@@ -64,26 +72,27 @@ public class LiveEffectsView extends SurfaceView implements SurfaceHolder.Callba
         super.onSizeChanged(w, h, oldw, oldh);
         mViewWidth = w;
         mViewHeight = h;
-//        if (mType != null) {
-//            mType.onSizeChanged(mContext, w, h);
-//        }
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.e("LiveEffectsView", "surfaceCreated");
-        EffectsManager.getInstance().setEffectView(this);
+        Log.e(TAG, "surfaceCreated");
+        if (mDrawThread != null) {
+            mDrawThread.startDraw();
+        }
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.e("LiveEffectsView", "surfaceChanged");
+        Log.e(TAG, "surfaceChanged");
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.e("LiveEffectsView", "surfaceDestroyed");
-//        stop();
+        Log.e(TAG, "surfaceDestroyed");
+        if (mDrawThread != null) {
+            mDrawThread.stopDraw();
+        }
     }
 
 
@@ -92,9 +101,7 @@ public class LiveEffectsView extends SurfaceView implements SurfaceHolder.Callba
      *
      * @param drawView
      */
-    public void setDrawView(BaseEffectDraw drawView) {
-        if (drawView == null)
-            throw new IllegalArgumentException("DrawView 不能为空");
+    public void setDrawView(@NonNull BaseEffectDraw drawView) {
         this.mEffectDraw = drawView;
         start();
     }
@@ -103,9 +110,7 @@ public class LiveEffectsView extends SurfaceView implements SurfaceHolder.Callba
         //执行初始化操作
         if (mDrawThread != null && mEffectDraw != null) {
             mEffectDraw.init();
-            if (!mDrawThread.isAlive())
-                mDrawThread.start();
-            mDrawThread.setRunning(true);
+            mDrawThread.startDraw();
         }
 
     }
@@ -116,7 +121,7 @@ public class LiveEffectsView extends SurfaceView implements SurfaceHolder.Callba
     public void release() {
         //销毁绘制线程
         if (mDrawThread != null) {
-            mDrawThread.setRunning(false);
+            mDrawThread.stopDraw();
             mDrawThread = null;
         }
         //销毁特效View
@@ -132,38 +137,65 @@ public class LiveEffectsView extends SurfaceView implements SurfaceHolder.Callba
     }
 
 
-    /**
-     * 绘制线程
-     */
+    private void drawOnCanvas() {
+        try {
+            mCanvas = mSurfaceHolder.lockCanvas();
+            if (mCanvas != null) {
+                mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                mEffectDraw.draw(mCanvas, mPaint);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (mCanvas != null) {
+                mSurfaceHolder.unlockCanvasAndPost(mCanvas);
+            }
+        }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        Log.e(TAG, "onAttachedToWindow: ");
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        Log.e(TAG, "onDetachedFromWindow");
+    }
+
+    //绘制线程
     private class DrawThread extends Thread {
 
-        // 用来停止线程的标记
-        private boolean isRunning = false;
+        public DrawThread() {
+            super("DrawThread");
+        }
 
-        public void setRunning(boolean running) {
-            isRunning = running;
+        // 用来停止线程的标记
+        private volatile boolean isRunning = false;
+
+        private AtomicBoolean hasStarted = new AtomicBoolean(false);
+
+        public void startDraw() {
+            if (hasStarted.compareAndSet(false, true)) {
+                super.start();
+            }
+            isRunning = true;
+        }
+
+        public void stopDraw() {
+            isRunning = false;
         }
 
         @Override
         public void run() {
-            Canvas canvas;
             // 无限循环绘制
-            while (isRunning) {
-                if (mEffectDraw != null && mViewWidth != 0 && mViewHeight != 0) {
-                    canvas = mSurfaceHolder.lockCanvas();
-                    if (canvas != null) {
-                        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                        mEffectDraw.draw(canvas, mPaint);
-                        if (isRunning) {
-                            mSurfaceHolder.unlockCanvasAndPost(canvas);
-                        } else {
-                            // 停止线程
-                            break;
-                        }
-                        // sleep
-                        SystemClock.sleep(16);
-                    }
+            while (true) {
+                if (isRunning) {
+                    drawOnCanvas();
                 }
+                SystemClock.sleep(5);
             }
         }
     }

@@ -2,7 +2,6 @@ package io.github.brijoe;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -29,7 +28,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
 
     private void init() {
-        Log.e("test", (mEffectsView == null) + "");
         btn1 = findViewById(R.id.btn_effect_1);
         btn2 = findViewById(R.id.btn_effect_2);
         btn3 = findViewById(R.id.btn_effect_3);
