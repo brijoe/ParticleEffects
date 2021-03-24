@@ -1,17 +1,17 @@
-package io.github.brijoe.liveeffect.meteor;
+package io.github.brijoe.liveeffect.particle;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import io.github.brijoe.R;
-import io.github.brijoe.liveeffect.BaseEffectBean;
-import io.github.brijoe.liveeffect.util.Util;
+import io.github.brijoe.liveeffect.ParticleBase;
+import io.github.brijoe.liveeffect.util.CommonUtils;
 
 /**
  * 流星Bean
  */
-public class MeteorBean extends BaseEffectBean {
+public class Meteor extends ParticleBase {
 
     //粒子bitmap
     private Bitmap mBitmap;
@@ -24,11 +24,11 @@ public class MeteorBean extends BaseEffectBean {
 
     @Override
     protected void reset() {
-        mScale = Util.getRandom(1, 10) * 1.00f / 10;
+        mScale = CommonUtils.getRandom(1, 10) * 1.00f / 10;
         mRotate = 45.0f;
-        mBitmap = Util.getScaleBitmap(R.drawable.icon_meteor, mScale, mRotate);
-        speed = Util.getRandom(12, 21);
-        float v = Util.getRandom();
+        mBitmap = CommonUtils.getScaleBitmap(R.drawable.icon_meteor, mScale, mRotate);
+        speed = CommonUtils.getRandom(12, 21);
+        float v = CommonUtils.getRandom();
         //25% 概率固定值
         if (v > 0.75) {
             mAlpha = 255;
@@ -36,22 +36,23 @@ public class MeteorBean extends BaseEffectBean {
         }
         //75% 概率在随机值
         else {
-            mAlpha = Util.getRandom(200, 255);
-            mAlphaReduce = Util.getRandom(10, 15);
+            mAlpha = CommonUtils.getRandom(200, 255);
+            mAlphaReduce = CommonUtils.getRandom(10, 15);
         }
         //40%概率 在横向[0.25,1]处开始绘制
         if (v < 0.4) {
-            mDrawX = Util.getRandom(mXRange / 4, mXRange);
+            mDrawX = CommonUtils.getRandom(mXRange / 4, mXRange);
             mDrawY = -mBitmap.getHeight();
         } else {
             //60% 概率
             mDrawX = mXRange;
-            mDrawY = Util.getRandom(-mBitmap.getHeight(), mYRange / 5 * 2 - mBitmap.getHeight());
+            mDrawY = CommonUtils.getRandom(-mBitmap.getHeight(), mYRange / 5 * 2 - mBitmap.getHeight());
         }
     }
 
     @Override
     public void drawNextFrame(Canvas canvas, Paint paint) {
+        super.drawNextFrame(canvas, paint);
         //边界条件，x方法移出绘制区域或者透明度为0
         if (mDrawX <= -2 * mXRange) {
             reset();
@@ -74,5 +75,15 @@ public class MeteorBean extends BaseEffectBean {
     @Override
     public boolean isLifeEnd() {
         return (mDrawX <= -mXRange - mBitmap.getWidth()) && (mDrawX >= -2 * mXRange);
+    }
+
+    @Override
+    public int getMaxNum() {
+        return 15;
+    }
+
+    @Override
+    public int getMaxAddDelayTime() {
+        return 1000;
     }
 }
