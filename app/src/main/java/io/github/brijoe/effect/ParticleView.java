@@ -1,4 +1,4 @@
-package io.github.brijoe.liveeffect;
+package io.github.brijoe.effect;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -17,7 +17,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
-import io.github.brijoe.liveeffect.util.ConfigUtils;
+import io.github.brijoe.effect.util.ConfigUtils;
 
 /**
  * 承载动态效果的View extends SurfaceView

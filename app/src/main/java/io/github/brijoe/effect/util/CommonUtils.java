@@ -1,4 +1,4 @@
-package io.github.brijoe.liveeffect.util;
+package io.github.brijoe.effect.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;

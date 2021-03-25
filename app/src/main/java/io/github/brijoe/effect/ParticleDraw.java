@@ -1,4 +1,4 @@
-package io.github.brijoe.liveeffect;
+package io.github.brijoe.effect;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -15,16 +15,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import io.github.brijoe.liveeffect.particle.Fireworm;
-import io.github.brijoe.liveeffect.particle.Meteor;
-import io.github.brijoe.liveeffect.particle.Rain;
-import io.github.brijoe.liveeffect.particle.Sakura;
-import io.github.brijoe.liveeffect.util.CommonUtils;
+import io.github.brijoe.effect.particle.Fireworm;
+import io.github.brijoe.effect.particle.Meteor;
+import io.github.brijoe.effect.particle.Rain;
+import io.github.brijoe.effect.particle.Sakura;
+import io.github.brijoe.effect.util.CommonUtils;
 
-import static io.github.brijoe.liveeffect.ParticleManager.FIREWORM;
-import static io.github.brijoe.liveeffect.ParticleManager.METEOR;
-import static io.github.brijoe.liveeffect.ParticleManager.RAIN;
-import static io.github.brijoe.liveeffect.ParticleManager.SAKURA;
+import static io.github.brijoe.effect.ParticleManager.FIREWORM;
+import static io.github.brijoe.effect.ParticleManager.METEOR;
+import static io.github.brijoe.effect.ParticleManager.RAIN;
+import static io.github.brijoe.effect.ParticleManager.SAKURA;
 
 /**
  * 管理粒子的公共绘制类

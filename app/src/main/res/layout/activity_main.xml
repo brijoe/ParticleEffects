@@ -7,7 +7,7 @@
     tools:context="io.github.brijoe.MainActivity">
 
 
-    <io.github.brijoe.liveeffect.ParticleView
+    <io.github.brijoe.effect.ParticleView
 
         android:id="@+id/effectView"
         android:layout_width="match_parent"

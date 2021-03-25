@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import io.github.brijoe.liveeffect.ParticleManager;
+import io.github.brijoe.effect.ParticleManager;
 
 
 public class MainActivity extends Activity implements View.OnClickListener {

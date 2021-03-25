@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/DynamicBack.iml" filepath="$PROJECT_DIR$/.idea/DynamicBack.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/DynamicBack.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/DynamicBack.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ParticleEffects.iml" filepath="$PROJECT_DIR$/.idea/modules/ParticleEffects.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/ParticleEffects.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/ParticleEffects.app.iml" />
     </modules>
   </component>
 </project>

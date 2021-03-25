@@ -1,4 +1,4 @@
-package io.github.brijoe.liveeffect.particle;
+package io.github.brijoe.effect.particle;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -7,8 +7,8 @@ import android.graphics.PointF;
 import android.util.Log;
 
 import io.github.brijoe.R;
-import io.github.brijoe.liveeffect.ParticleBase;
-import io.github.brijoe.liveeffect.util.CommonUtils;
+import io.github.brijoe.effect.ParticleBase;
+import io.github.brijoe.effect.util.CommonUtils;
 
 /**
  * 萤火虫

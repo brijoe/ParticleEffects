@@ -1,4 +1,4 @@
-package io.github.brijoe.liveeffect;
+package io.github.brijoe.effect;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;

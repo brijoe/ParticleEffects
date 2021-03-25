@@ -1,4 +1,4 @@
-package io.github.brijoe.liveeffect;
+package io.github.brijoe.effect;
 
 /**
  * 动态效果管理器
