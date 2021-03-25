@@ -2,13 +2,7 @@ package io.github.brijoe;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 
 import io.github.brijoe.effect.ParticleManager;
@@ -16,39 +10,17 @@ import io.github.brijoe.effect.ParticleManager;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-
-    private Handler handler = new Handler(Looper.getMainLooper());
-
-
     private Button btnStart, btnEnd;
 
     private Button btn1, btn2, btn3, btn4;
-
-
-    private View contentView;
+    private View backContainer, controlContainer, effectsContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
-        HandlerThread handlerThread = new HandlerThread("test");
-        handlerThread.start();
-        handler = new Handler(handlerThread.getLooper()) {
 
-            private int msg = 1;
-
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case 1:
-                        Log.e("test", "hah");
-                        handler.sendEmptyMessageDelayed(1, 5);
-                        break;
-                }
-                super.handleMessage(msg);
-            }
-        };
     }
 
 
@@ -59,7 +31,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         btn2 = findViewById(R.id.btn_effect_2);
         btn3 = findViewById(R.id.btn_effect_3);
         btn4 = findViewById(R.id.btn_effect_4);
-        contentView = ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
+        backContainer = findViewById(R.id.rl_back);
+        controlContainer = findViewById(R.id.ll_control);
+        effectsContainer = findViewById(R.id.ll_effects);
+        backContainer.setOnClickListener(this);
         btnStart.setOnClickListener(this);
         btnEnd.setOnClickListener(this);
         btn1.setOnClickListener(this);
@@ -72,31 +47,36 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-
+            case R.id.rl_back:
+                if (controlContainer.getVisibility() == View.VISIBLE) {
+                    controlContainer.setVisibility(View.INVISIBLE);
+                    effectsContainer.setVisibility(View.INVISIBLE);
+                } else {
+                    controlContainer.setVisibility(View.VISIBLE);
+                    effectsContainer.setVisibility(View.VISIBLE);
+                }
+                break;
             case R.id.btn_start:
-//                handler.removeCallbacksAndMessages(null);
-//                handler.sendEmptyMessageDelayed(1,5);
                 ParticleManager.getInstance().startEffect();
                 break;
             case R.id.btn_stop:
-//                handler.removeCallbacksAndMessages(null);
                 ParticleManager.getInstance().stopEffect();
                 break;
             case R.id.btn_effect_1:
                 ParticleManager.getInstance().startEffect(ParticleManager.SAKURA);
-                contentView.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_sakura));
+                backContainer.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_sakura));
                 break;
             case R.id.btn_effect_2:
                 ParticleManager.getInstance().startEffect(ParticleManager.FIREWORM);
-                contentView.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_fireworm));
+                backContainer.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_fireworm));
                 break;
             case R.id.btn_effect_3:
                 ParticleManager.getInstance().startEffect(ParticleManager.RAIN);
-                contentView.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_rain));
+                backContainer.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_rain));
                 break;
             case R.id.btn_effect_4:
                 ParticleManager.getInstance().startEffect(ParticleManager.METEOR);
-                contentView.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_meteor));
+                backContainer.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_meteor));
                 break;
         }
     }
