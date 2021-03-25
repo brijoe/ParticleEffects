@@ -26,7 +26,7 @@ import io.github.brijoe.liveeffect.util.ConfigUtils;
  */
 public class ParticleView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private static final String TAG = "LiveEffectsView";
+    private static final String TAG = "ParticleView";
 
     private SurfaceHolder mSurfaceHolder;
 
@@ -101,6 +101,7 @@ public class ParticleView extends SurfaceView implements SurfaceHolder.Callback 
 
 
     public void start(@ParticleDraw.EffectType int particleType) {
+        Log.e(TAG, "start- particleType=" + particleType);
         if (mParticleDraw != null) {
             mParticleDraw.init(particleType);
         }
@@ -109,6 +110,7 @@ public class ParticleView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     public void stop() {
+        Log.e(TAG, "stop操作");
         mAllowDraw = false;
         mDrawThread.stopDraw();
     }
@@ -117,6 +119,7 @@ public class ParticleView extends SurfaceView implements SurfaceHolder.Callback 
      * 释放资源操作
      */
     public void release() {
+        //退出绘制线程
         if (mDrawThread != null) {
             mDrawThread.quit();
         }
@@ -125,21 +128,14 @@ public class ParticleView extends SurfaceView implements SurfaceHolder.Callback 
             mParticleDraw.destroy();
             mParticleDraw = null;
         }
-        //clear cavans
-        if (mCanvas != null) {
-            mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        }
+        //
         mAllowDraw = false;
     }
 
     private long last_time = 0;
 
+    //绘制
     private void drawOnCanvas() {
-        if (System.currentTimeMillis() - last_time > 1000) {
-            last_time = System.currentTimeMillis();
-            Log.e(TAG, "drawOnCanvas: ");
-
-        }
         try {
             mCanvas = mSurfaceHolder.lockCanvas();
             if (mCanvas != null) {
@@ -155,8 +151,8 @@ public class ParticleView extends SurfaceView implements SurfaceHolder.Callback 
         }
     }
 
+    //绘制之前都要清空一下
     private void clearCanvas() {
-        //绘制之前都要清空一下
         try {
             mCanvas = mSurfaceHolder.lockCanvas();
             if (mCanvas != null) {
@@ -190,7 +186,7 @@ public class ParticleView extends SurfaceView implements SurfaceHolder.Callback 
     private class DrawThread extends HandlerThread {
 
 
-        private final int ADD_EFFECT_BEAN = 0x01;
+        private final int DRAW_CANVAS = 0x01;
 
         private final int CLEAN_CANVAS = 0x02;
 
@@ -212,12 +208,14 @@ public class ParticleView extends SurfaceView implements SurfaceHolder.Callback 
         }
 
         public void startDraw() {
+            Log.e(TAG, "startDraw: ");
             mEffectHandler.removeCallbacksAndMessages(null);
-            mEffectHandler.sendEmptyMessageDelayed(ADD_EFFECT_BEAN,
-                    ConfigUtils.DRAW_FRAME_RATE);
+            mEffectHandler.sendEmptyMessageDelayed(DRAW_CANVAS,
+                    ConfigUtils.getConfigRate());
         }
 
         public void stopDraw() {
+            Log.e(TAG, "stopDraw: ");
             mEffectHandler.removeCallbacksAndMessages(null);
             mEffectHandler.sendEmptyMessage(CLEAN_CANVAS);
 //            clearCanvas();
@@ -236,9 +234,13 @@ public class ParticleView extends SurfaceView implements SurfaceHolder.Callback 
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 switch (msg.what) {
-                    case ADD_EFFECT_BEAN:
+                    case DRAW_CANVAS:
+                        //防止remove后还在执行
+                        if (!mAllowDraw) {
+                            break;
+                        }
                         drawOnCanvas();
-                        mEffectHandler.sendEmptyMessageDelayed(ADD_EFFECT_BEAN,
+                        mEffectHandler.sendEmptyMessageDelayed(DRAW_CANVAS,
                                 ConfigUtils.DRAW_FRAME_RATE);
                         break;
                     case CLEAN_CANVAS:

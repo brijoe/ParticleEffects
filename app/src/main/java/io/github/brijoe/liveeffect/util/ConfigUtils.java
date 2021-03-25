@@ -68,6 +68,6 @@ public class ConfigUtils {
                 break;
         }
 
-        return 5;
+        return rate;
     }
 }

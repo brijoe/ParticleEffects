@@ -8,8 +8,7 @@ package io.github.brijoe.liveeffect;
  */
 public class ParticleManager {
 
-    private String TAG = getClass().getSimpleName();
-    private int mCurrentEffectId;
+    private int mCurType;
     private ParticleView mParticleView;
     public static final int NO_EFFECT = -1;
     public static final int SAKURA = 1;
@@ -47,8 +46,8 @@ public class ParticleManager {
      */
     public void setParticleType(@ParticleDraw.EffectType int type) {
         //屏蔽多次设置
-        if (mCurrentEffectId != type) {
-            mCurrentEffectId = type;
+        if (mCurType != type) {
+            mCurType = type;
         }
     }
 
@@ -58,18 +57,31 @@ public class ParticleManager {
      * @return
      */
     public @ParticleDraw.EffectType
-    int getCurrentEffectId() {
-        return mCurrentEffectId;
+    int getParticleId() {
+        return mCurType;
     }
 
 
     public void startEffect() {
-        if (mCurrentEffectId == NO_EFFECT) {
+        startInternal();
+    }
+
+    public void startEffect(@ParticleDraw.EffectType int type) {
+        if (mCurType != type) {
+            mCurType = type;
+            startInternal();
+        }
+
+    }
+
+    private void startInternal() {
+        if (mCurType == NO_EFFECT) {
             return;
         }
         if (mParticleView != null) {
-            mParticleView.start(mCurrentEffectId);
+            mParticleView.start(mCurType);
         }
+
     }
 
     /**

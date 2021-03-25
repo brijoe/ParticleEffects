@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import io.github.brijoe.liveeffect.ParticleManager;
-import io.github.brijoe.liveeffect.ParticleView;
 
 
 public class MainActivity extends Activity implements View.OnClickListener {
@@ -25,7 +24,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private Button btn1, btn2, btn3, btn4;
 
-    private ParticleView mParticleView;
 
     private View contentView;
 
@@ -85,23 +83,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 ParticleManager.getInstance().stopEffect();
                 break;
             case R.id.btn_effect_1:
-                ParticleManager.getInstance().setParticleType(ParticleManager.SAKURA);
-                ParticleManager.getInstance().startEffect();
+                ParticleManager.getInstance().startEffect(ParticleManager.SAKURA);
                 contentView.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_sakura));
                 break;
             case R.id.btn_effect_2:
-                ParticleManager.getInstance().setParticleType(ParticleManager.FIREWORM);
-                ParticleManager.getInstance().startEffect();
+                ParticleManager.getInstance().startEffect(ParticleManager.FIREWORM);
                 contentView.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_fireworm));
                 break;
             case R.id.btn_effect_3:
-                ParticleManager.getInstance().setParticleType(ParticleManager.RAIN);
-                ParticleManager.getInstance().startEffect();
+                ParticleManager.getInstance().startEffect(ParticleManager.RAIN);
                 contentView.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_rain));
                 break;
             case R.id.btn_effect_4:
-                ParticleManager.getInstance().setParticleType(ParticleManager.METEOR);
-                ParticleManager.getInstance().startEffect();
+                ParticleManager.getInstance().startEffect(ParticleManager.METEOR);
                 contentView.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_meteor));
                 break;
         }
